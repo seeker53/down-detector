@@ -12,13 +12,15 @@ const Popup = () => {
         }
 
         try {
-            const response = await fetch(url, { mode: 'no-cors' });
-            if (response.ok || response.type === 'opaque') {
-                setStatus('Website is online');
-            } else {
-                setStatus('Website is offline');
+            const response = await fetch(url, { mode: 'cors' });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
+
+            setStatus('Website is online');
         } catch (error) {
+            console.error('Error checking website status:', error);
             setStatus('Website is offline');
         }
     };
