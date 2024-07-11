@@ -12,13 +12,19 @@ const Popup = () => {
         }
 
         try {
-            const response = await fetch(url, { mode: 'cors' });
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/check?url=${encodeURIComponent(url)}`);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
-            setStatus('Website is online');
+            const result = await response.json();
+
+            if (result.status === 'online') {
+                setStatus('Website is online');
+            } else {
+                setStatus('Website is offline');
+            }
         } catch (error) {
             console.error('Error checking website status:', error);
             setStatus('Website is offline');
