@@ -25,3 +25,7 @@ dist-ssr
 
 #environment variables file
 .env
+
+#node_modules and crawler-profile of proxy-server
+./proxy-server/crawler-profile
+./proxy-server/node_modules
