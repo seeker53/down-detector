@@ -1,23 +1,39 @@
-const express = require('express');
-const axios = require('axios');
-const cors = require('cors');
+const http = require("http");
+const DownDetector = require("./downdetector");
+const detector = new DownDetector();
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+const port = process.env.PORT || 3333;
 
-app.use(cors());
-
-app.get('/check', async (req, res) => {
-  const { url } = req.query;
-
-  try {
-    const response = await axios.get(url);
-    res.json({ status: 'online', statusCode: response.status });
-  } catch (error) {
-    res.json({ status: 'offline', statusCode: error.response ? error.response.status : 'unknown' });
-  }
+const server = http.createServer((req, res) => {
+    const site = req.url.replace("/", "");
+    if (site && site !== "favicon.ico") {
+        detector.detect(site);
+        detector.on("response", ([code, message]) => {
+            if (code !== 200) {
+                res.writeHead(404, "Site not mentioned");
+                res.end();
+            } else {
+                res.writeHead(200, {
+                    "Content-Type": "application/json"
+                });
+                res.end(JSON.stringify(message));
+            }
+        });
+    } else {
+        res.writeHead(200);
+        res.end("SITE NOT MENTIONED :)");
+    }
 });
 
-app.listen(PORT, () => {
-  console.log(`Proxy server running on port ${PORT}`);
+server.on("connection", () => {
+    console.log("[+] New Connection");
+});
+
+server.listen(port, (err) => {
+    if (err) {
+        console.log("ERROR \n" + err);
+    } else {
+        console.log("[+] Server ready: ", `http://localhost:${port}`);
+        console.log("[+] Example: http://localhost:" + port + "/github");
+    }
 });
