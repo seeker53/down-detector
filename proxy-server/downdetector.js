@@ -8,12 +8,11 @@ class DownDetector extends EventEmitter {
             headless: "new",
             executablePath: process.env.EXEC_PATH || null,
             defaultViewport: null,
-            userDataDir: "./crawler-profile/",
             args: [
                 "--window-size=600,600",
-                "--disable-infobars", 
-                // "--no-sandbox", 
-                // "--disabled-setupid-sandbox"
+                "--disable-infobars",
+                // "--no-sandbox",
+                // "--disable-setuid-sandbox"
             ]
         });
 
